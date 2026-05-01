@@ -38,6 +38,11 @@ const upload = multer({
   limits: { fileSize: 10 * 1024 * 1024 }
 });
 
+// Health Check
+app.get('/', (req, res) => {
+  res.send('🚀 ExpliFit Clothing API is running!');
+});
+
 // =============================================
 //  ADMIN ENDPOINTS
 // =============================================
