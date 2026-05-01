@@ -1,4 +1,4 @@
-const API = 'http://localhost:5018';
+const API = 'https://explifit-clothing.onrender.com';
 
 export async function post(url, body = {}) {
   const r = await fetch(`${API}${url}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
