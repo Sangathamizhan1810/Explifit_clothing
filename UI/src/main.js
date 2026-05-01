@@ -391,26 +391,32 @@ async function vote(action) {
     }
   }).catch(() => {});
 
-  setTimeout(() => renderCards(), 350);
+  state.renderTimer = setTimeout(() => renderCards(), 350);
 }
 
 async function undoLast() {
   if (!undoHistory.length) return;
+  const undoBtn = document.getElementById('undo-btn');
+  if (undoBtn) undoBtn.disabled = true;
   const last = undoHistory.pop();
 
-  // Undo in API
-  await del(`/api/interactions/undo/${state.customerId}`);
-
-  // Revert local state
+  // Revert local state immediately (Optimistic UI)
   state.idx = last.designIndex;
   if (last.action === 'like') state.likes--;
   else if (last.action === 'dislike') state.dislikes--;
   else state.notifies--;
 
   updateProgress();
+  if (state.renderTimer) clearTimeout(state.renderTimer);
   renderCards();
 
-  const undoBtn = document.getElementById('undo-btn');
+  // Undo in API in the background
+  try {
+    await del(`/api/interactions/undo/${state.customerId}`);
+  } catch (e) {
+    console.error('Failed to undo on server:', e);
+  }
+
   if (undoBtn) undoBtn.disabled = undoHistory.length === 0;
 }
 

@@ -176,11 +176,11 @@ app.post('/api/interactions', (req, res) => {
 // Undo last interaction
 app.delete('/api/interactions/undo/:customerId', (req, res) => {
   const last = queryOne(
-    'SELECT rowid, * FROM interactions WHERE customer_id = ? ORDER BY rowid DESC LIMIT 1',
+    'SELECT id, * FROM interactions WHERE customer_id = ? ORDER BY id DESC LIMIT 1',
     [req.params.customerId]
   );
   if (!last) return res.status(404).json({ error: 'Nothing to undo' });
-  runSql('DELETE FROM interactions WHERE rowid = ?', [last.rowid]);
+  runSql('DELETE FROM interactions WHERE id = ?', [last.id]);
   res.json({ success: true, undoneAction: last.action, undoneDesignId: last.design_id });
 });
 
